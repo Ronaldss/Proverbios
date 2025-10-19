@@ -194,7 +194,7 @@
     const startOffset = 60; // px
     let startTime = null;
 
-    function recalc() {
+    /*function recalc() {
       // Distância total a percorrer
       const distance = Math.max(div.scrollHeight - container.clientHeight, 0);
       // Velocidade alvo: ~30 px/s como base, ajustando por relação de tamanho
@@ -203,6 +203,17 @@
       const speed = baseSpeed * scale; // px/s
       const duration = distance > 0 ? (distance / speed) * 1000 : 0; // ms
       return { distance, duration };
+    }*/
+
+    function recalc() {
+      // Reccalc original comentado acima
+      const distance = Math.max(div.scrollHeight - container.clientHeight, 0);
+      const baseSpeed = 14;             // px/s
+      const ratio = distance / container.clientHeight; 
+      const scale = Math.min(Math.max(ratio, 0.8), 1.5); // clamp 0.8–1.5
+      const speed = baseSpeed * scale;  // px/s
+      const duration = distance > 0 ? (distance / speed) * 1000 : 0; // ms
+
     }
 
     let { distance, duration } = recalc();
