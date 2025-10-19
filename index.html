@@ -85,13 +85,15 @@
 
   #chapterText {
     position: absolute;
-    top: 60px;
+    top: 0;
     left: 0;
     right: 0;
     font-size: 28px;
     line-height: 1.7;
     text-align: justify;
     color: #e9e9e9;
+    will-change: transform;
+    transform: translate3d(0, 60px, 0); /* alinhado ao título */
   }
 
   footer {
@@ -112,12 +114,12 @@
   </header>
 
   <div id="chapterContainer">
-    <!--<div id="chapterTitle"></div>-->
+    <div id="chapterTitle"></div>
     <div id="chapterText"></div>
   </div>
 
   <footer>Nordeste Tecnologia © 2025</footer>
-
+<!--
 <script type="module">
   import chapters from './capitulos.js';
 
@@ -125,7 +127,7 @@
     const today = new Date();
     const day = today.getDate();
     const index = Math.min(day, 31) - 1;
-    //const chapterTitle = `Provérbios - Capítulo ${day}`;
+    const chapterTitle = `Provérbios - Capítulo ${day}`;
     const text = chapters[index] || "Texto do capítulo não disponível.";
     document.getElementById("chapterTitle").innerHTML = chapterTitle;
     document.getElementById("chapterText").innerHTML = text;
@@ -169,5 +171,96 @@
     setupAutoScroll();
   };
 </script>
+-->
+
+<script type="module">
+  import chapters from "./capitulos.js";
+
+  function showChapterForToday() {
+    const today = new Date();
+    const day = today.getDate();
+    const index = Math.min(day, 31) - 1;
+    const chapterTitle = `Provérbios - Capítulo ${day}`;
+    const text = chapters[index] || "Texto do capítulo não disponível.";
+    document.getElementById("chapterTitle").innerHTML = chapterTitle;
+    document.getElementById("chapterText").innerHTML = text;
+  }
+
+  function setupAutoScroll() {
+    const div = document.getElementById("chapterText");
+    const container = document.getElementById("chapterContainer");
+
+    // Posição visual inicial 60px abaixo do título
+    const startOffset = 60; // px
+    let startTime = null;
+
+    function recalc() {
+      // Distância total a percorrer
+      const distance = Math.max(div.scrollHeight - container.clientHeight, 0);
+      // Velocidade alvo: ~30 px/s como base, ajustando por relação de tamanho
+      const baseSpeed = 30; // px/s
+      const scale = Math.min(Math.max(distance / container.clientHeight, 0.5), 3);
+      const speed = baseSpeed * scale; // px/s
+      const duration = distance > 0 ? (distance / speed) * 1000 : 0; // ms
+      return { distance, duration };
+    }
+
+    let { distance, duration } = recalc();
+
+    // Aplicar estilo inicial
+    div.style.willChange = "transform";
+    div.style.transform = `translate3d(0, ${startOffset}px, 0)`;
+
+    function step(ts) {
+      if (startTime === null) startTime = ts;
+
+      // Recalcular se tamanho mudou (responsivo, fontes, quebra de linha)
+      const { distance: d2, duration: dur2 } = recalc();
+      if (d2 !== distance || dur2 !== duration) {
+        distance = d2;
+        duration = dur2;
+        startTime = ts; // reinicia progress para suavidade
+      }
+
+      if (duration === 0 || distance === 0) {
+        // Nada para rolar
+        div.style.transform = `translate3d(0, ${startOffset}px, 0)`;
+        requestAnimationFrame(step);
+        return;
+      }
+
+      const elapsed = ts - startTime;
+      let t = elapsed / duration; // 0..1 linear
+      if (t >= 1) {
+        // Loop contínuo sem fade
+        startTime = ts;
+        t = 0;
+      }
+
+      const y = startOffset - distance * t;
+      div.style.transform = `translate3d(0, ${y}px, 0)`;
+      requestAnimationFrame(step);
+    }
+
+    requestAnimationFrame(step);
+
+    // Reagir a resize e mudanças de fonte/viewport
+    let resizeTimer;
+    const onResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        startTime = null; // força novo cálculo suave
+      }, 150);
+    };
+    window.addEventListener("resize", onResize);
+  }
+
+  window.onload = () => {
+    showChapterForToday();
+    setupAutoScroll();
+  };
+</script>
+
+
 </body>
 </html>
