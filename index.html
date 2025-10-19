@@ -1,122 +1,173 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Provérbios - Capítulo do Dia</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Serif:wght@400;600&display=swap" rel="stylesheet">
+
 <style>
+  :root {
+    --bg: #0b132b;
+    --accent: #ff7b00;
+    --text: #f0f0f0;
+  }
+
+  * { box-sizing: border-box; }
+
   body {
-    background-color: #222;
-    color: #eee;
-    font-family: Arial, sans-serif;
-    padding: 30px;
     margin: 0;
     height: 100vh;
+    background: radial-gradient(circle at top right, #0b132b, #1c2541);
+    color: var(--text);
+    font-family: "Noto Serif", serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     overflow: hidden;
   }
-  h1 {
-    font-size: 36px;
-    text-align: center;
+
+  header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+    z-index: 10;
+    backdrop-filter: blur(8px);
   }
-  #chapterText {
-    max-height: 60vh;   /* Ajuste conforme necessário */
-    overflow: hidden;
-    margin: 0 auto;
+
+  header img {
+    position: absolute;
+    left: 40px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+  }
+
+  header img:hover {
+    transform: rotate(5deg) scale(1.05);
+  }
+
+  header h1 {
+    font-family: "Inter", sans-serif;
+    font-size: 42px;
+    color: #ffd89c;
+    text-shadow: 0 0 10px rgba(255,255,255,0.3);
+    margin: 0;
+  }
+
+  #chapterContainer {
+    margin-top: 140px;
     width: 90vw;
-    font-size: 24px;
-    line-height: 1.6;
+    height: 80vh;
+    overflow: hidden;
     position: relative;
+    padding: 10px 30px;
+  }
+
+  #chapterTitle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: "Inter", sans-serif;
+    font-size: 34px;
+    color: var(--accent);
+    text-shadow: 0 0 10px rgba(255, 123, 0, 0.3);
+    z-index: 5;
+  }
+
+  #chapterText {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    font-size: 28px;
+    line-height: 1.7;
+    text-align: justify;
+    color: #e9e9e9;
+  }
+
+  footer {
+    position: fixed;
+    bottom: 20px;
+    color: #888;
+    font-family: "Inter", sans-serif;
+    font-size: 18px;
+    opacity: 0.8;
   }
 </style>
 </head>
+
 <body>
-  <h1>Provérbios - Capítulo do Dia</h1>
-  <div id="chapterText"></div>
-<script>
-const chapters = [
-`
-Capítulo 17<br>
-1.  É melhor um bocado seco, e com ele a tranquilidade, do que a casa cheia de iguarias e com desavença.<br>
-2.  O servo prudente dominará sobre o filho que faz envergonhar; e repartirá a herança entre os irmãos.<br>
-3.  O crisol é para a prata, e o forno para o ouro; mas o Senhor é quem prova os corações.<br>
-4.  O ímpio atenta para o lábio iníquo, o mentiroso inclina os ouvidos à língua maligna.<br>
-5.  O que escarnece do pobre insulta ao seu Criador, o que se alegra da calamidade não ficará impune.<br>
-6.  A coroa dos velhos são os filhos dos filhos; e a glória dos filhos são seus pais.<br>
-7.  Não convém ao tolo a fala excelente; quanto menos ao príncipe, o lábio mentiroso.<br>
-8.  O presente é, aos olhos dos que o recebem, como pedra preciosa; para onde quer que se volte servirá de proveito.<br>
-9.  Aquele que encobre a transgressão busca a amizade, mas o que revolve o assunto separa os maiores amigos.<br>
-10. A repreensão penetra mais profundamente no prudente do que cem açoites no tolo.<br>
-11. Na verdade o rebelde não busca senão o mal; afinal, um mensageiro cruel será enviado contra ele.<br>
-12. Encontre-se o homem com a ursa roubada dos filhos, mas não com o louco na sua estultícia.<br>
-13. Quanto àquele que paga o bem com o mal, não se apartará o mal da sua casa.<br>
-14. Como o soltar das águas é o início da contenda, assim, antes que sejas envolvido afasta-te da questão.<br>
-15. O que justifica o ímpio, e o que condena o justo, tanto um como o outro são abomináveis ao Senhor.<br>
-16. De que serviria o preço na mão do tolo para comprar sabedoria, visto que não tem entendimento?<br>
-17. Em todo o tempo ama o amigo e para a hora da angústia nasce o irmão.<br>
-18. O homem falto de entendimento compromete-se, ficando por fiador na presença do seu amigo.<br>
-19. O que ama a transgressão ama a contenda; o que exalta a sua porta busca a ruína.<br>
-20. O perverso de coração jamais achará o bem; e o que tem a língua dobre vem a cair no mal.<br>
-21. O que gera um tolo para a sua tristeza o faz; e o pai do insensato não tem alegria.<br>
-22. O coração alegre é como o bom remédio, mas o espírito abatido seca até os ossos.<br>
-23. O ímpio toma presentes em secreto para perverter as veredas da justiça.<br>
-24. No rosto do entendido se vê a sabedoria, mas os olhos do tolo vagam pelas extremidades da terra.<br>
-25. O filho insensato é tristeza para seu pai, e amargura para aquela que o deu à luz.<br>
-26. Também não é bom punir o justo, nem tampouco ferir aos príncipes por equidade.<br>
-27. O que possui o conhecimento guarda as suas palavras, e o homem de entendimento é de precioso espírito.<br>
-28. Até o tolo, quando se cala, é reputado por sábio; e o que cerra os seus lábios é tido por entendido.<br>`
-];
+  <header>
+    <img src="nt.png" alt="Logo Nordeste Tecnologia">
+    <h1>Provérbios - Capítulo do Dia</h1>
+  </header>
 
-// --- Exibição do capítulo conforme o dia ---
-function showChapterForToday() {
-  const today = new Date();
-  let day = today.getDate();
-  if(day > 31) day = 31;
-  const chapterIndex = day - 1;
-  //const chapterText = chapters[chapterIndex] || "Texto do capítulo não disponível.";
-  const chapterText = chapters[0] || "Texto do capítulo não disponível.";
-  document.getElementById("chapterText").innerHTML = chapterText;
-}
+  <div id="chapterContainer">
+    <div id="chapterTitle"></div>
+    <div id="chapterText"></div>
+  </div>
 
-showChapterForToday();
+  <footer>Nordeste Tecnologia © 2025</footer>
 
-// --- Scroll automático apenas se necessário ---
-function setupAutoScroll() {
-  const div = document.getElementById("chapterText");
-  div.scrollTop = 0;
+<script type="module">
+  import chapters from './capitulos.js';
 
-  // Verifica se o texto excede a altura visível
-  if (div.scrollHeight > div.clientHeight) {
-    // Tempo total do scroll (quanto maior, mais devagar; ajuste se desejar)
-    const totalScrollDuration = 120000; // 120 segundos para chegar ao fim
-    let startTime = null;
+  function showChapterForToday() {
+    const today = new Date();
+    const day = today.getDate();
+    const index = Math.min(day, 31) - 1;
+    const chapterTitle = `Provérbios - Capítulo ${day}`;
+    const text = chapters[index] || "Texto do capítulo não disponível.";
+    document.getElementById("chapterTitle").innerHTML = chapterTitle;
+    document.getElementById("chapterText").innerHTML = text;
+  }
 
-    function scrollStep(timestamp) {
-      if (!startTime) startTime = timestamp;
-      const elapsed = timestamp - startTime;
-      const progress = Math.min(elapsed / totalScrollDuration, 1);
-      div.scrollTop = progress * (div.scrollHeight - div.clientHeight);
+  function setupAutoScroll() {
+    const div = document.getElementById("chapterText");
+    const container = document.getElementById("chapterContainer");
+    div.style.top = "60px";
 
-      if (progress < 1) {
-        requestAnimationFrame(scrollStep);
+    // Ajusta automaticamente a velocidade conforme o tamanho do texto:
+    const distance = div.scrollHeight - container.clientHeight;
+    const baseDuration = 180000; // 3 minutos base
+    const duration = baseDuration * (distance / container.clientHeight);
+    let start = null;
+
+    function step(timestamp) {
+      if (!start) start = timestamp;
+      const progress = timestamp - start;
+      const move = Math.min(progress / duration, 1) * distance;
+      div.style.top = `${60 - move}px`;
+      if (progress < duration) {
+        requestAnimationFrame(step);
       } else {
-        // Ao chegar no fim, anima de volta para o topo com efeito fade-out e fade-in
         div.style.transition = "opacity 1s";
         div.style.opacity = 0;
         setTimeout(() => {
-          div.scrollTop = 0;
+          div.style.transition = "none";
+          div.style.top = "60px";
           div.style.opacity = 1;
-          startTime = null;
-          // Recomeça o scroll após um breve intervalo
-          setTimeout(() => requestAnimationFrame(scrollStep), 2000);
+          start = null;
+          setTimeout(() => requestAnimationFrame(step), 2000);
         }, 1000);
       }
     }
-    // Inicia o scroll
-    requestAnimationFrame(scrollStep);
+    requestAnimationFrame(step);
   }
-}
 
-// Executa ao carregar e toda vez que um novo capítulo for exibido
-window.onload = setupAutoScroll;
+  window.onload = () => {
+    showChapterForToday();
+    setupAutoScroll();
+  };
 </script>
 </body>
 </html>

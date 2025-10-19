@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<title>Provérbios - Capítulo do Dia</title>
+<style>
+  body {
+    background-color: #222;
+    color: #eee;
+    font-family: Arial, sans-serif;
+    padding: 30px;
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+  }
+  h1 {
+    font-size: 36px;
+    text-align: center;
+  }
+  #chapterText {
+    max-height: 60vh;   /* Ajuste conforme necessário */
+    overflow: hidden;
+    margin: 0 auto;
+    width: 90vw;
+    font-size: 24px;
+    line-height: 1.6;
+    position: relative;
+  }
+</style>
+</head>
+<body>
+  <h1>Provérbios - Capítulo do Dia</h1>
+  <div id="chapterText"></div>
+<script>
+const chapters = [
+`
+Capítulo 17<br>
+1.  É melhor um bocado seco, e com ele a tranquilidade, do que a casa cheia de iguarias e com desavença.<br>
+2.  O servo prudente dominará sobre o filho que faz envergonhar; e repartirá a herança entre os irmãos.<br>
+3.  O crisol é para a prata, e o forno para o ouro; mas o Senhor é quem prova os corações.<br>
+4.  O ímpio atenta para o lábio iníquo, o mentiroso inclina os ouvidos à língua maligna.<br>
+5.  O que escarnece do pobre insulta ao seu Criador, o que se alegra da calamidade não ficará impune.<br>
+6.  A coroa dos velhos são os filhos dos filhos; e a glória dos filhos são seus pais.<br>
+7.  Não convém ao tolo a fala excelente; quanto menos ao príncipe, o lábio mentiroso.<br>
+8.  O presente é, aos olhos dos que o recebem, como pedra preciosa; para onde quer que se volte servirá de proveito.<br>
+9.  Aquele que encobre a transgressão busca a amizade, mas o que revolve o assunto separa os maiores amigos.<br>
+10. A repreensão penetra mais profundamente no prudente do que cem açoites no tolo.<br>
+11. Na verdade o rebelde não busca senão o mal; afinal, um mensageiro cruel será enviado contra ele.<br>
+12. Encontre-se o homem com a ursa roubada dos filhos, mas não com o louco na sua estultícia.<br>
+13. Quanto àquele que paga o bem com o mal, não se apartará o mal da sua casa.<br>
+14. Como o soltar das águas é o início da contenda, assim, antes que sejas envolvido afasta-te da questão.<br>
+15. O que justifica o ímpio, e o que condena o justo, tanto um como o outro são abomináveis ao Senhor.<br>
+16. De que serviria o preço na mão do tolo para comprar sabedoria, visto que não tem entendimento?<br>
+17. Em todo o tempo ama o amigo e para a hora da angústia nasce o irmão.<br>
+18. O homem falto de entendimento compromete-se, ficando por fiador na presença do seu amigo.<br>
+19. O que ama a transgressão ama a contenda; o que exalta a sua porta busca a ruína.<br>
+20. O perverso de coração jamais achará o bem; e o que tem a língua dobre vem a cair no mal.<br>
+21. O que gera um tolo para a sua tristeza o faz; e o pai do insensato não tem alegria.<br>
+22. O coração alegre é como o bom remédio, mas o espírito abatido seca até os ossos.<br>
+23. O ímpio toma presentes em secreto para perverter as veredas da justiça.<br>
+24. No rosto do entendido se vê a sabedoria, mas os olhos do tolo vagam pelas extremidades da terra.<br>
+25. O filho insensato é tristeza para seu pai, e amargura para aquela que o deu à luz.<br>
+26. Também não é bom punir o justo, nem tampouco ferir aos príncipes por equidade.<br>
+27. O que possui o conhecimento guarda as suas palavras, e o homem de entendimento é de precioso espírito.<br>
+28. Até o tolo, quando se cala, é reputado por sábio; e o que cerra os seus lábios é tido por entendido.<br>`
+];
+
+// --- Exibição do capítulo conforme o dia ---
+function showChapterForToday() {
+  const today = new Date();
+  let day = today.getDate();
+  if(day > 31) day = 31;
+  const chapterIndex = day - 1;
+  //const chapterText = chapters[chapterIndex] || "Texto do capítulo não disponível.";
+  const chapterText = chapters[0] || "Texto do capítulo não disponível.";
+  document.getElementById("chapterText").innerHTML = chapterText;
+}
+
+showChapterForToday();
+
+// --- Scroll automático apenas se necessário ---
+function setupAutoScroll() {
+  const div = document.getElementById("chapterText");
+  div.scrollTop = 0;
+
+  // Verifica se o texto excede a altura visível
+  if (div.scrollHeight > div.clientHeight) {
+    // Tempo total do scroll (quanto maior, mais devagar; ajuste se desejar)
+    const totalScrollDuration = 120000; // 120 segundos para chegar ao fim
+    let startTime = null;
+
+    function scrollStep(timestamp) {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(elapsed / totalScrollDuration, 1);
+      div.scrollTop = progress * (div.scrollHeight - div.clientHeight);
+
+      if (progress < 1) {
+        requestAnimationFrame(scrollStep);
+      } else {
+        // Ao chegar no fim, anima de volta para o topo com efeito fade-out e fade-in
+        div.style.transition = "opacity 1s";
+        div.style.opacity = 0;
+        setTimeout(() => {
+          div.scrollTop = 0;
+          div.style.opacity = 1;
+          startTime = null;
+          // Recomeça o scroll após um breve intervalo
+          setTimeout(() => requestAnimationFrame(scrollStep), 2000);
+        }, 1000);
+      }
+    }
+    // Inicia o scroll
+    requestAnimationFrame(scrollStep);
+  }
+}
+
+// Executa ao carregar e toda vez que um novo capítulo for exibido
+window.onload = setupAutoScroll;
+</script>
+</body>
+</html>
